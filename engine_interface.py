@@ -1,11 +1,9 @@
 import logging
 
 
-def setup_user():
-    logging.info("Настройка пользовательских данных")
-    return "Настроены пользовательские данные"
+def is_user_exist(user_data):
+    return "mastery" in user_data
 
 
-def setup_chat():
-    logging.info("Настройка данных чата")
-    return "Настроены данные чаты"
+def create_user(user_data):
+    user_data["mastery"] = 0

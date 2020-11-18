@@ -2,10 +2,13 @@
   "locale" : "en",
   "values" :
   {
-    "admins_only" : "This action only available for admins or chat creator.",
-    "unauthorized" : "{}, it seems like we don't know each other. Send me /start in private messages to fix it. Message, that you should have received:\n\n",
-
+    "choose_lang" : "Choose language:",
     "en" : "English",
-    "ru" : "Русский"
+    "help" : "This bot is text fishing simulator. It allows to fish in any group, that has a pond.\n\nAvailable commands:\n/language - language settings\n/help - prints this message",
+    "lang_set" : "Language set.",
+    "ru" : "Русский",
+    "setup_1" : "Before we go...\nPreferred language:",
+    "start" : "\n\nHi!\nMy name is Mandy and I'm your fishing adviser in these places. Looks strange, that you decided to fish in the messenger using text messages, but... Will do all my best to help you enjoy!\n\nType /help or tap the \"Help\" button to find out more.",
+    "start_again" : "Hi.\nI'm Mandy, forgot? Your fishing adviser in these places. I help you get comfortable here.\n\nType /help or tap the \"Help\" button to find out more."
   }
 }
