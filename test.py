@@ -1,64 +1,68 @@
 import matplotlib.pyplot as plt
 import random
+import logging
 
 
 class WeatherEngine(object):
 
     def __init__(self):
-        self.season = "ardent"  # another available values: breeze, harvest, chill
-        self.cloudy = "clear"  # another available values: cloudy, overcast
+        self.season = "ardent"  # breeze, harvest, chill
+        self.cloudy = "clear"  # cloudy, overcast
         self.rain = False
         self.storm = False
+        self.state = "clear" # "cloudy [rain, storm, both]"
 
     def get_weather(self):
         return self.cloudy, self.rain, self.storm
 
+    def set_weather(self, cloudy_value, rain_value, storm_value):
+        self.cloudy = cloudy_value
+        self.rain = rain_value
+        self.storm = storm_value
+
+    def set_state(self, state):
+        logging.info(state)
+        self.state = state
+
+        states = state.split(" ")
+
+        logging.info(states[0])
+        self.cloudy = states[0]
+
+        if len(states) == 1:
+            self.rain = False
+            self.storm = False
+        else:
+            logging.info(states[1])
+            if states[1] == "rain":
+                self.rain = True
+                self.storm = False
+            elif states[1] == "storm":
+                self.rain = False
+                self.storm = True
+            elif states[1] == "both":
+                self.rain = True
+                self.storm = True
+
     def step(self):
         # Ярый
         if self.season == "ardent":
-            # Далее конечный автомат из шести состояний, описанный диаграммой в документации
-            if self.cloudy == "clear":
-                event_probabilities = {"clear": 5000, "cloudy": 4000, "overcast": 1000}
-                self.cloudy = what_happened(event_probabilities)
+            # Далее конечный автомат из шести состояний
+            if self.state == "clear":
+                state_probabilities = {"clear":  7000, "cloudy": 3000}
+            elif self.state == "cloudy":
+                state_probabilities = {"clear": 6000, "overcast": 4000}
+            elif self.state == "overcast":
+                state_probabilities = {"clear": 3500, "cloudy": 1500, "overcast storm": 3000, "overcast rain": 2000}
+            elif self.state == "overcast storm":
+                state_probabilities = {"cloudy": 5000, "overcast both": 5000}
+            elif self.state == "overcast rain":
+                state_probabilities = {"cloudy": 5000, "overcast both": 5000}
+            elif self.state == "overcast both":
+                state_probabilities = {"cloudy": 10000}
+            else:
                 return
-            if self.cloudy == "cloudy":
-                event_probabilities = {"clear": 5000, "overcast": 5000}
-                self.cloudy = what_happened(event_probabilities)
-                return
-            if self.cloudy == "overcast" and not self.rain and not self.storm:
-                event_probabilities = {"clear": 5000, "cloudy": 3000, "overcast storm": 1500, "overcast rain": 500}
-                event = what_happened(event_probabilities)
-                if event == "overcast storm":
-                    self.storm = True
-                    return
-                if event == "overcast rain":
-                    self.rain = True
-                    return
-                self.cloudy = event
-                return
-            if self.cloudy == "overcast" and not self.rain and self.storm:
-                event_probabilities = {"cloudy": 8000, "storm and rain": 2000}
-                event = what_happened(event_probabilities)
-                if event == "storm and rain":
-                    self.rain = True
-                    return
-                self.storm = False
-                self.cloudy = event
-                return
-            if self.cloudy == "overcast" and self.rain and not self.storm:
-                event_probabilities = {"cloudy": 5000, "storm and rain": 5000}
-                event = what_happened(event_probabilities)
-                if event == "storm and rain":
-                    self.storm = True
-                    return
-                self.rain = False
-                self.cloudy = event
-                return
-            if self.cloudy == "overcast" and self.rain and self.storm:
-                self.rain = False
-                self.storm = False
-                self.cloudy = "cloudy"
-                return
+            self.set_state(what_happened(state_probabilities))
 
 
 def what_happened(events_probabilities):
@@ -70,9 +74,12 @@ def what_happened(events_probabilities):
             random_number -= probability
 
 
+logging.basicConfig(filename="test.log", level=logging.INFO, datefmt="%m.%d.%y - %H:%M:%S",
+                    format="%(levelname)-7s - %(module)-15s - %(asctime)s - %(message)s")
+
 eng = WeatherEngine()
 history = list()
-for i in range(1000):
+for i in range(24):
     print(eng.get_weather())
     history.append(eng.get_weather())
     eng.step()
@@ -107,5 +114,5 @@ plt.plot(cloudy_l)
 plt.plot(rain_l)
 plt.plot(storm_l)
 plt.show()
-plt.pie([clear_amount, cloudy_amount, overcast_amount], labels=["Clear", "Cloudy", "Overcast"])
-plt.show()
+# plt.pie([clear_amount, cloudy_amount, overcast_amount], labels=["Clear", "Cloudy", "Overcast"])
+# plt.show()
